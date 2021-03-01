@@ -21,6 +21,37 @@ with open("Orlando_Furioso.txt", "r") as file:
                     ("Ludovico Ariosto" in line)):
                 output.write(line)
             
+#%%
+
+### Create dictionary with segmentation by chapter (Canto) ###
+
+Canti_segmentation = {}
+
+with open("Orlando_Furioso_text.txt") as file:
+    
+    for num, line in enumerate(file, 1):
+        if ( ("CANTO" in line.upper()) & (len(line.split())==2) ):
+            
+            nome_canto = "CANTO " + line.split()[1]
+            Canti_segmentation.update( {nome_canto:num} )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         
 
