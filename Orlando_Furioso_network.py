@@ -31,9 +31,13 @@ with open("Orlando_Furioso_text.txt") as file:
     
     for num, line in enumerate(file, 1):
         if ( ("CANTO" in line.upper()) & (len(line.split())==2) ):
-            
-            nome_canto = "CANTO " + line.split()[1]
-            Canti_segmentation.update( {nome_canto:num} )
+        
+            name_chapter = "Canto " + line.split()[1]
+            name_chapter = name_chapter.title()
+            Canti_segmentation.update( {name_chapter:num} )
+        
+
+
 
 #%%
 
@@ -78,10 +82,50 @@ with open("Orlando_Furioso_text.txt") as file:
                 Characters[name].append(num)
 
 
+#%%
+
+### Count how occurrences of characters per chapter. ###
+
+Character_occurrences = { name:[] for name in Characters_to_track }
+
+for name, value in Characters.items():
+    
+    for end_line in list(Canti_segmentation.values())[1:]:
+        
+        chapter_counter = 0
+    
+        for occurrence in value:
+            if (occurrence < end_line):
+                chapter_counter += 1
+            if (occurrence > end_line):
+                break
+            
+        Character_occurrences[name].append(chapter_counter)
+    
+    total_occ = len(Characters[name])
+    Character_occurrences[name].append(total_occ)
+
+for name, value in Character_occurrences.items():
+    
+    increment = [ value[0] ]
+    
+    for index in range(45):
+        
+        increment.append(value[index+1] - value[index])
+        
+    Character_occurrences[name] = increment
 
 
+#%%
 
+### Save data in csv format. ###
 
+data = pd.DataFrame(Character_occurrences)
+
+data.columns = Characters_to_track
+data.index = Canti_segmentation.keys()
+
+data.to_csv("Characters_per_chapter.csv", index=True)
 
 
 
