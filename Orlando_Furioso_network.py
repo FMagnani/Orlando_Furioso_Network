@@ -35,6 +35,47 @@ with open("Orlando_Furioso_text.txt") as file:
             nome_canto = "CANTO " + line.split()[1]
             Canti_segmentation.update( {nome_canto:num} )
 
+#%%
+
+### Characters to track ###
+# Without the last letter: Ariosto often names them in such a way
+
+Characters_to_track = [
+    'Agramant',
+    'Angelic',
+    'Aquilant',
+    'Astolf',
+    'Bradamant',
+    'Brandimart',
+    'Dudon',
+    'Ferra',
+    'Gradass',
+    'Grifon',
+    'Mandricard',
+    'Marfis',
+    'Olivier',
+    'Orland',
+    'Rinald',
+    'Rodomont',
+    'Ruggier',
+    'Sacripant',
+    'Sobrin',
+    'Zerbin',
+    ]
+
+# Initialize a dictionary of empty lists.
+# Keys are the name of the characters, values are the list of the lines in
+# which that name is found.
+
+Characters = { name:[] for name in Characters_to_track }
+
+with open("Orlando_Furioso_text.txt") as file:
+    
+    for num, line in enumerate(file, 1):
+        for name in Characters.keys():
+            if (name in line):
+                
+                Characters[name].append(num)
 
 
 
