@@ -59,27 +59,56 @@ data = data.set_index('Chants')
 
 G = nx.Graph()
 
-### Layers
+### Layers (nodes)
 
 layers = [Christians, data.index.values, Muslims]
-colors = ['blue', 'black', 'red']
+colors = ['darkblue', 'black', 'darkred']
 
 for i in range(3):
     G.add_nodes_from(layers[i], node_color=colors[i], layer=i)
     
-pos = nx.multipartite_layout(G, subset_key='layer', align='horizontal')
+pos = nx.multipartite_layout(G, subset_key='layer', align='vertical')
 
 for i in range(3):
     nx.draw_networkx_nodes(G, pos, nodelist=layers[i],
-                           node_color=colors[i], node_size=10)
+                           node_color=colors[i], node_size=20)
 
 
-#%%
+### Edges
+
+for name in Christians:
+    for chant in data.index.values:
+        w = data[name][chant]
+        if (w > 10):
+            G.add_edge(name, chant, weight=w)
+
+for name in Muslims:
+    for chant in data.index.values:
+        w = data[name][chant]
+        if (w > 10):
+            G.add_edge(name, chant, weight=w)
 
 
+weights = [0.05*G[u][v]['weight'] for u,v in G.edges]
+
+edges_blue = []
+edges_red = []
+
+for edge in G.edges:
+    if ((str(edge[0]) in Christians) | (str(edge[1]) in Christians)):
+             edges_blue.append(edge)
+    else:
+        edges_red.append(edge)
 
 
+nx.draw_networkx_edges(G, pos, width=weights, alpha=.9, 
+                       edgelist=edges_red, edge_color='red')            
 
+nx.draw_networkx_edges(G, pos, width=weights, alpha=.9, 
+                       edgelist=edges_blue, edge_color='blue')            
+
+
+### Labels
 
 
 
