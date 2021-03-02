@@ -76,7 +76,7 @@ for i in range(3):
 
 ### Edges
 
-citation_threshold = 10
+citation_threshold = 0
 
 for name in Christians:
     for chant in data.index.values:
@@ -108,6 +108,7 @@ nx.draw_networkx_edges(G, pos, width=weights, alpha=.9,
 
 nx.draw_networkx_edges(G, pos, width=weights, alpha=.9, 
                        edgelist=edges_blue, edge_color='blue')            
+
 
 
 #%%
