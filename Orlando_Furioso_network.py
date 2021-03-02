@@ -16,34 +16,66 @@ import networkx as nx
 
 data = pd.read_csv("Characters_per_chapter.csv", index_col=0)
 
+# Factions (as they are at the beginning)
+
+Christians = [
+    'Aquilant',
+    'Astolf',
+    'Bradamant',
+    'Brandimart',
+    'Grifon',
+    'Olivier',
+    'Orland',
+    'Rinald',
+    'Zerbin'
+    ]
+
+Muslims = [
+    'Agramant', 
+    'Angelic',
+    'Dudon', 
+    'Ferra', 
+    'Gradass', 
+    'Mandricard', 
+    'Marfis', 
+    'Rodomont', 
+    'Ruggier', 
+    'Sacripant',
+    'Sobrin'
+    ]
+
+Chants = [
+    'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X',
+    'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX',
+    'XXI', 'XXII', 'XXIII', 'XXIV', 'XXV', 'XXVI', 'XXVII', 'XXVIII', 'XXIX', 'XXX',
+    'XXXI', 'XXXII', 'XXXIII', 'XXXIV', 'XXXV', 'XXXVI', 'XXXVII', 'XXXVIII', 'XXXIX', 'XL',
+    'XLI', 'XLII', 'XLIII', 'XLIV', 'XLV', 'XLVI'
+    ]
+
+data['Chants'] = Chants
+data = data.set_index('Chants')
 
 #%%
 
-data.index = range(47)[1:]
-
 G = nx.Graph()
 
-G.add_nodes_from( data.index.values )
-pos = nx.circular_layout(G)
+### Layers
 
-for name in data.columns:
+layers = [Christians, data.index.values, Muslims]
+colors = ['blue', 'black', 'red']
 
-    selector = (data[name] != 0)
-
-    values = data.loc[selector, name].index.values
-
-    for i in range(len(values)-1):
-        G.add_edge(values[i], values[i+1])
-        
-nx.draw_networkx_nodes(G, pos, node_size=30)
-nx.draw_networkx_edges(G, pos)
-
-labels = {}
-for i in G.nodes:
+for i in range(3):
+    G.add_nodes_from(layers[i], node_color=colors[i], layer=i)
     
-    labels[i] = str(i)
-    
-nx.draw_networkx_labels(G, pos, labels, font_size=12)
+pos = nx.multipartite_layout(G, subset_key='layer', align='horizontal')
+
+for i in range(3):
+    nx.draw_networkx_nodes(G, pos, nodelist=layers[i],
+                           node_color=colors[i], node_size=10)
+
+
+#%%
+
 
 
 
