@@ -76,16 +76,18 @@ for i in range(3):
 
 ### Edges
 
+citation_threshold = 10
+
 for name in Christians:
     for chant in data.index.values:
         w = data[name][chant]
-        if (w > 10):
+        if (w > citation_threshold):
             G.add_edge(name, chant, weight=w)
 
 for name in Muslims:
     for chant in data.index.values:
         w = data[name][chant]
-        if (w > 10):
+        if (w > citation_threshold):
             G.add_edge(name, chant, weight=w)
 
 
@@ -108,10 +110,7 @@ nx.draw_networkx_edges(G, pos, width=weights, alpha=.9,
                        edgelist=edges_blue, edge_color='blue')            
 
 
-### Labels
-
-
-
+#%%
 
 
 
