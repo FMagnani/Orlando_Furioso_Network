@@ -10,8 +10,19 @@ GitHub repo: https://github.com/FMagnani
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
- 
-#%%
+import argparse 
+
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-t", "--threshold", 
+                    help="the minimum citation per chant needed to realize a link", 
+                    type=int, default=0)
+args = parser.parse_args();
+
+citation_threshold = args.threshold
+
+
 
 ### Import data ###
 
@@ -56,7 +67,7 @@ Chants = [
 data['Chants'] = Chants
 data = data.set_index('Chants')
 
-#%%
+
 
 G = nx.Graph()
 
@@ -78,8 +89,6 @@ for i in range(3):
 
 
 ### Edges
-
-citation_threshold = 0
 
 for name in Christians:
     for chant in data.index.values:
@@ -118,7 +127,7 @@ plt.title("Citation threshold: "+str(citation_threshold))
 plt.show()
 
 
-#%%
+
 
 
 
