@@ -9,7 +9,8 @@ GitHub repo: https://github.com/FMagnani
 
 import pandas as pd
 import networkx as nx
-
+import matplotlib.pyplot as plt
+ 
 #%%
 
 ### Import data ###
@@ -62,6 +63,7 @@ G = nx.Graph()
 ### Layers (nodes)
 
 layers = [Christians, data.index.values, Muslims]
+labels = ['Paladini cristiani', 'Canti', 'Guerrieri mori']
 colors = ['darkblue', 'black', 'darkred']
 
 for i in range(3):
@@ -71,7 +73,8 @@ pos = nx.multipartite_layout(G, subset_key='layer', align='vertical')
 
 for i in range(3):
     nx.draw_networkx_nodes(G, pos, nodelist=layers[i],
-                           node_color=colors[i], node_size=20)
+                           node_color=colors[i], node_size=20,
+                           label=labels[i])
 
 
 ### Edges
@@ -102,13 +105,17 @@ for edge in G.edges:
     else:
         edges_red.append(edge)
 
-
 nx.draw_networkx_edges(G, pos, width=weights, alpha=.9, 
                        edgelist=edges_red, edge_color='red')            
 
 nx.draw_networkx_edges(G, pos, width=weights, alpha=.9, 
                        edgelist=edges_blue, edge_color='blue')            
 
+### Legend and title
+
+plt.legend(scatterpoints = 1)
+plt.title("Citation threshold: "+str(citation_threshold))
+plt.show()
 
 
 #%%
