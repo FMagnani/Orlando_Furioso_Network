@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import argparse 
 
 
+### Argument parser ###
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", "--threshold", 
@@ -21,7 +22,6 @@ parser.add_argument("-t", "--threshold",
 args = parser.parse_args();
 
 citation_threshold = args.threshold
-
 
 
 ### Import data ###
@@ -127,6 +127,13 @@ plt.title("Citation threshold: "+str(citation_threshold))
 plt.show()
 
 
+### Labels - optional ###
+
+# labels = {}
+# for i in G.nodes:
+#     labels[i] = str(i)
+
+# nx.draw_networkx_labels(G, pos, labels, font_size=10)
 
 
 
