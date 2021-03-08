@@ -7,12 +7,10 @@ Created on Mon Mar  1 11:07:50 2021
 GitHub repo: https://github.com/FMagnani
 """
 
-import sys
 import pandas as pd
 
 
-
-### Clean data from the notes at top and bottom of the page. ###
+### Clean data from the notes at top and bottom of the pages. ###
 with open("Orlando_Furioso.txt", "r") as file:
     with open("Orlando_Furioso_text.txt", "w") as output:
         
@@ -53,7 +51,7 @@ chapters_df['last_line'] = last_line
 
 
 
-### Characters to track ###
+# Characters to track
 
 Characters_to_track = [
     'Agramant',
@@ -78,42 +76,43 @@ Characters_to_track = [
     'Zerbin',
     ]
 
-# Initialize a dictionary of empty lists.
-# Keys are the name of the characters, values are the list of the lines in
-# which that name is found.
+### Find all occurrences of these names in the file and the lines in which they appear ###
 
-Characters = { name:[] for name in Characters_to_track }
+# tot_occurrencies is a dict with keys = characters' names, 
+# values = list of the lines in which they appear
+
+tot_occurrences = { name:[] for name in Characters_to_track }
 
 with open("Orlando_Furioso_text.txt") as file:
     
     for num, line in enumerate(file, 1):
-        for name in Characters.keys():
+        for name in tot_occurrences.keys():
             if (name in line):
                 
-                Characters[name].append(num)
+                tot_occurrences[name].append(num)
 
 
 ### Count how many occurrences-per-chapter a character does have ###
 
-Character_occurrences = { name:[] for name in Characters_to_track }
+chapter_occurrences = { name:[] for name in Characters_to_track }
 
-for name in Characters:
+for name in tot_occurrences:
     
     for first, last in zip(chapters_df['first_line'], chapters_df['last_line']):
             
         count = 0
-        for value in Characters[name]:
+        for value in tot_occurrences[name]:
             
             if ( first <= value < last ):
                 count += 1
             
-        Character_occurrences[name].append(count)
+        chapter_occurrences[name].append(count)
 
 
 ### Save data to csv
 
 
-data = pd.DataFrame(Character_occurrences, index=chapters_df.index)
+data = pd.DataFrame(chapter_occurrences, index=chapters_df.index)
 
 data.to_csv("data.csv", index=True)
 
