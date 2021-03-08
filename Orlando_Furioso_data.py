@@ -10,7 +10,7 @@ GitHub repo: https://github.com/FMagnani
 import sys
 import pandas as pd
 
-#%%
+
 
 ### Clean data from the notes at top and bottom of the page. ###
 with open("Orlando_Furioso.txt", "r") as file:
@@ -24,9 +24,9 @@ with open("Orlando_Furioso.txt", "r") as file:
                 output.write(line)
                 length += 1
             
-#%%
 
-### Create dictionary with segmentation by chapter (Canto) ###
+
+### Create dictionary with segmentation by chapters ###
 
 chapters_dict = {}
 
@@ -39,10 +39,10 @@ with open("Orlando_Furioso_text.txt") as file:
             name_chapter = name_chapter.title()
             chapters_dict.update( {name_chapter:num} )
 
+
 ### Create DataFrame from dictionary ###
         
-chapters_df = pd.DataFrame(chapters_dict.values(), 
-                  index=chapters_dict.keys())
+chapters_df = pd.DataFrame(chapters_dict.values(), index=chapters_dict.keys())
 
 chapters_df.columns = ['first_line']
 
@@ -51,10 +51,9 @@ last_line.append(length)
 
 chapters_df['last_line'] = last_line
 
-#%%
+
 
 ### Characters to track ###
-# Without the last letter: Ariosto often names them in such a way
 
 Characters_to_track = [
     'Agramant',
@@ -94,50 +93,29 @@ with open("Orlando_Furioso_text.txt") as file:
                 Characters[name].append(num)
 
 
-#%%
-
-### Count how occurrences of characters per chapter. ###
+### Count how many occurrences-per-chapter a character does have ###
 
 Character_occurrences = { name:[] for name in Characters_to_track }
 
-for name, value in Characters.items():
+for name in Characters:
     
-    for end_line in list(Canti_segmentation.values())[1:]:
-        
-        chapter_counter = 0
-    
-        for occurrence in value:
-            if (occurrence < end_line):
-                chapter_counter += 1
-            if (occurrence > end_line):
-                break
+    for first, last in zip(chapters_df['first_line'], chapters_df['last_line']):
             
-        Character_occurrences[name].append(chapter_counter)
-    
-    total_occ = len(Characters[name])
-    Character_occurrences[name].append(total_occ)
-
-for name, value in Character_occurrences.items():
-    
-    increment = [ value[0] ]
-    
-    for index in range(45):
-        
-        increment.append(value[index+1] - value[index])
-        
-    Character_occurrences[name] = increment
+        count = 0
+        for value in Characters[name]:
+            
+            if ( first <= value < last ):
+                count += 1
+            
+        Character_occurrences[name].append(count)
 
 
-#%%
+### Save data to csv
 
-### Save data in csv format. ###
 
-data = pd.DataFrame(Character_occurrences)
+data = pd.DataFrame(Character_occurrences, index=chapters_df.index)
 
-data.columns = Characters_to_track
-data.index = Canti_segmentation.keys()
-
-data.to_csv("Characters_per_chapter.csv", index=True)
+data.to_csv("data.csv", index=True)
 
 
 
