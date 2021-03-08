@@ -16,16 +16,19 @@ import pandas as pd
 with open("Orlando_Furioso.txt", "r") as file:
     with open("Orlando_Furioso_text.txt", "w") as output:
         
+        length = 0
+        
         for line in file:
             if not (("Letteratura italiana" in line) | 
                     ("Ludovico Ariosto" in line)):
                 output.write(line)
+                length += 1
             
 #%%
 
 ### Create dictionary with segmentation by chapter (Canto) ###
 
-Canti_segmentation = {}
+chapters_dict = {}
 
 with open("Orlando_Furioso_text.txt") as file:
     
@@ -34,10 +37,19 @@ with open("Orlando_Furioso_text.txt") as file:
         
             name_chapter = "Canto " + line.split()[1]
             name_chapter = name_chapter.title()
-            Canti_segmentation.update( {name_chapter:num} )
+            chapters_dict.update( {name_chapter:num} )
+
+### Create DataFrame from dictionary ###
         
+chapters_df = pd.DataFrame(chapters_dict.values(), 
+                  index=chapters_dict.keys())
 
+chapters_df.columns = ['first_line']
 
+last_line = list(chapters_df['first_line'][1:])
+last_line.append(length)
+
+chapters_df['last_line'] = last_line
 
 #%%
 
