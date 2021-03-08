@@ -83,7 +83,7 @@ Characters_to_track = [
 
 tot_occurrences = { name:[] for name in Characters_to_track }
 
-with open("Orlando_Furioso_text.txt") as file:
+with open("Orlando_Furioso_clean.txt") as file:
     
     for num, line in enumerate(file, 1):
         for name in tot_occurrences.keys():
