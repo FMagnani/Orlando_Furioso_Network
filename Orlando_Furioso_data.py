@@ -12,7 +12,7 @@ import pandas as pd
 
 ### Clean data from the notes at top and bottom of the pages. ###
 with open("Orlando_Furioso.txt", "r") as file:
-    with open("Orlando_Furioso_text.txt", "w") as output:
+    with open("Orlando_Furioso_clean.txt", "w") as output:
         
         length = 0
         
@@ -28,7 +28,7 @@ with open("Orlando_Furioso.txt", "r") as file:
 
 chapters_dict = {}
 
-with open("Orlando_Furioso_text.txt") as file:
+with open("Orlando_Furioso_clean.txt") as file:
     
     for num, line in enumerate(file, 1):
         if ( ("CANTO" in line.upper()) & (len(line.split())==2) ):
