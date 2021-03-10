@@ -23,7 +23,7 @@ parser.add_argument("-t", "--threshold",
 args = parser.parse_args();
 
 #citation_threshold = args.threshold
-citation_threshold = 30
+citation_threshold = 0
 
 ### Import data ###
 
@@ -95,15 +95,6 @@ colors = ['darkblue', 'black', 'darkred']
 for i in range(3):
     G.add_nodes_from(layers[i], layer=i)
     
-#pos = nx.multipartite_layout(G, subset_key='layer', align='vertical')
-
-# Drawing nodes in groups, specifying colors and label (used by the legend).
-
-# for i in range(3):
-#     nx.draw_networkx_nodes(G, pos, nodelist=layers[i],
-#                            node_color=colors[i], node_size=20,
-#                            label=labels[i])
-
 
 ### Edges ###
 
@@ -156,24 +147,38 @@ G_char = bp.weighted_projected_graph(G, characters)
 ##
 #
 
+# General
+
+fig, ax = plt.subplots(nrows=1, ncols=2)
+
 ### G - Bipartite Graph ###
+
+pos = nx.multipartite_layout(G, subset_key='layer', align='vertical')
+
+# Drawing nodes in groups, specifying colors and label (used by the legend).
+
+for i in range(3):
+    nx.draw_networkx_nodes(G, pos, nodelist=layers[i],
+                            node_color=colors[i], node_size=20,
+                            label=labels[i], ax=ax[0])
+
 
 # Drawing edges. Width proportional to the weight. Divided in two groups with different colors.
 
-# width = [0.05*G[u][v]['weight'] for u,v in G.edges]
+width = [0.05*G[u][v]['weight'] for u,v in G.edges]
 
-# nx.draw_networkx_edges(G, pos, width=width, alpha=.9, 
-#                        edgelist=edges_red, edge_color='red')            
+nx.draw_networkx_edges(G, pos, width=width, alpha=.9, 
+                        edgelist=edges_red, edge_color='red', ax=ax[0])            
 
-# nx.draw_networkx_edges(G, pos, width=width, alpha=.9, 
-#                        edgelist=edges_blue, edge_color='blue')            
+nx.draw_networkx_edges(G, pos, width=width, alpha=.9, 
+                        edgelist=edges_blue, edge_color='blue', ax=ax[0])            
 
 
 ### Legend and title
 
-# plt.legend(scatterpoints = 1, loc=1)
-# plt.title("Citation threshold: "+str(citation_threshold))
-# plt.show()
+# ax[0].legend(scatterpoints = 1, loc=1)
+# ax[0].title("Citation threshold: "+str(citation_threshold))
+#plt.show()
 
 
 ### Labels - optional ###
@@ -206,19 +211,19 @@ pos = nx.circular_layout(G_char)
 width = [0.1*G_char[u][v]['weight'] for u,v in G_char.edges]
 
 nx.draw_networkx_nodes(G_char, pos, nodelist=Christians,
-                            node_color='darkblue', node_size=50)
+                            node_color='darkblue', node_size=50, ax=ax[1])
 
 nx.draw_networkx_nodes(G_char, pos, nodelist=Saracens,
-                            node_color='darkred', node_size=50)
+                            node_color='darkred', node_size=50, ax=ax[1])
 
 nx.draw_networkx_edges(G_char, pos, width=width, alpha=.8, 
-                       edgelist=char_edges_red, edge_color='red')            
+                       edgelist=char_edges_red, edge_color='red', ax=ax[1])            
 
 nx.draw_networkx_edges(G_char, pos, width=width, alpha=.8, 
-                       edgelist=char_edges_blue, edge_color='blue')    
+                       edgelist=char_edges_blue, edge_color='blue', ax=ax[1])    
 
 nx.draw_networkx_edges(G_char, pos, width=width, alpha=.9, 
-                       edgelist=char_edges_black, edge_color='black')    
+                       edgelist=char_edges_black, edge_color='black', ax=ax[1])    
 
 
 
