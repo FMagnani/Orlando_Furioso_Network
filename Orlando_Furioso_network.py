@@ -11,6 +11,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import argparse 
+from networkx.algorithms import bipartite as bp
 
 
 ### Argument parser ###
@@ -21,9 +22,8 @@ parser.add_argument("-t", "--threshold",
                     type=int, default=0)
 args = parser.parse_args();
 
-citation_threshold = args.threshold
-
-
+#citation_threshold = args.threshold
+citation_threshold = 30
 
 ### Import data ###
 
@@ -45,7 +45,7 @@ Christians = [
     'Zerbin'
     ]
 
-Muslims = [
+Saracens = [
     'Agramant', 
     'Angelic',
     'Dudon', 
@@ -77,7 +77,7 @@ data = data.set_index('Chants')
 
 #
 ##
-### Graph ###
+### Bipartite Graph ###
 ##
 #
 
@@ -86,7 +86,7 @@ G = nx.Graph()
 
 ### Layers (nodes) ###
 
-layers = [Christians, data.index.values, Muslims]
+layers = [Christians, Chants, Saracens]
 labels = ['Christians', 'Chants', 'Muslims']
 colors = ['darkblue', 'black', 'darkred']
 
@@ -95,14 +95,14 @@ colors = ['darkblue', 'black', 'darkred']
 for i in range(3):
     G.add_nodes_from(layers[i], layer=i)
     
-pos = nx.multipartite_layout(G, subset_key='layer', align='vertical')
+#pos = nx.multipartite_layout(G, subset_key='layer', align='vertical')
 
 # Drawing nodes in groups, specifying colors and label (used by the legend).
 
-for i in range(3):
-    nx.draw_networkx_nodes(G, pos, nodelist=layers[i],
-                           node_color=colors[i], node_size=20,
-                           label=labels[i])
+# for i in range(3):
+#     nx.draw_networkx_nodes(G, pos, nodelist=layers[i],
+#                            node_color=colors[i], node_size=20,
+#                            label=labels[i])
 
 
 ### Edges ###
@@ -115,7 +115,7 @@ for name in Christians:
         if (occurrences > citation_threshold):
             G.add_edge(name, chant, weight=occurrences)
 
-for name in Muslims:
+for name in Saracens:
     for chant in data.index.values:
         occurrences = data[name][chant]
         if (occurrences > citation_threshold):
@@ -134,22 +134,46 @@ for edge in G.edges:
         edges_red.append(edge)
 
 
+#
+##
+### Projected graphs 
+##
+#
+
+characters = [ *Christians, *Saracens ]
+
+G_char = bp.weighted_projected_graph(G, characters)
+
+
+
+
+
+
+
+#
+##
+### Drawing
+##
+#
+
+### G - Bipartite Graph ###
+
 # Drawing edges. Width proportional to the weight. Divided in two groups with different colors.
 
-width = [0.05*G[u][v]['weight'] for u,v in G.edges]
+# width = [0.05*G[u][v]['weight'] for u,v in G.edges]
 
-nx.draw_networkx_edges(G, pos, width=width, alpha=.9, 
-                       edgelist=edges_red, edge_color='red')            
+# nx.draw_networkx_edges(G, pos, width=width, alpha=.9, 
+#                        edgelist=edges_red, edge_color='red')            
 
-nx.draw_networkx_edges(G, pos, width=width, alpha=.9, 
-                       edgelist=edges_blue, edge_color='blue')            
+# nx.draw_networkx_edges(G, pos, width=width, alpha=.9, 
+#                        edgelist=edges_blue, edge_color='blue')            
 
 
 ### Legend and title
 
-plt.legend(scatterpoints = 1, loc=1)
-plt.title("Citation threshold: "+str(citation_threshold))
-plt.show()
+# plt.legend(scatterpoints = 1, loc=1)
+# plt.title("Citation threshold: "+str(citation_threshold))
+# plt.show()
 
 
 ### Labels - optional ###
@@ -163,9 +187,38 @@ plt.show()
 
 
 
+### G_char - Projected Graph ###
 
+char_edges_blue = []
+char_edges_red = []
+char_edges_black = []
 
+for edge in G_char.edges:
+    if ((str(edge[0]) in Christians) & (str(edge[1]) in Christians)):
+        char_edges_blue.append(edge)
+    if ((str(edge[0]) in Saracens) & (str(edge[1]) in Saracens)):
+        char_edges_red.append(edge)
+    else:
+        char_edges_black.append(edge)
 
+pos = nx.circular_layout(G_char)
+
+width = [0.1*G_char[u][v]['weight'] for u,v in G_char.edges]
+
+nx.draw_networkx_nodes(G_char, pos, nodelist=Christians,
+                            node_color='darkblue', node_size=50)
+
+nx.draw_networkx_nodes(G_char, pos, nodelist=Saracens,
+                            node_color='darkred', node_size=50)
+
+nx.draw_networkx_edges(G_char, pos, width=width, alpha=.8, 
+                       edgelist=char_edges_red, edge_color='red')            
+
+nx.draw_networkx_edges(G_char, pos, width=width, alpha=.8, 
+                       edgelist=char_edges_blue, edge_color='blue')    
+
+nx.draw_networkx_edges(G_char, pos, width=width, alpha=.9, 
+                       edgelist=char_edges_black, edge_color='black')    
 
 
 
