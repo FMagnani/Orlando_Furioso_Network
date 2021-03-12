@@ -103,7 +103,7 @@ for name in tot_occurrences:
         count = 0
         for value in tot_occurrences[name]:
             
-            if ( first <= value < last ):
+            if ( value in range(first, last) ):
                 count += 1
             
         chapter_occurrences[name].append(count)
